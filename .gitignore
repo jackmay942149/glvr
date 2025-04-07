@@ -32,7 +32,6 @@
 *.app
 
 # Directories
-build/
 intermediate/
 
 # Visual Studio Things
