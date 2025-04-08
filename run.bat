@@ -1,2 +1,4 @@
 call build.bat
-"build/Debug/GLVR.exe"
+cd build/
+"GLVR.exe"
+cd ..

@@ -39,3 +39,7 @@ intermediate/
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
+
+
+# Helix Cache
+.cache/

@@ -8,8 +8,13 @@ project(GLVR)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Set Project Source Files
+set(SOURCES
+    src/main.cpp
+    src/shader.cpp
+)
 # Set Output Directory
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/build/")
 
 # Find OpenGL package
 find_package(OpenGL REQUIRED)
@@ -27,7 +32,7 @@ link_directories(${CMAKE_SOURCE_DIR}/lib)
 add_library(glad STATIC ${CMAKE_SOURCE_DIR}/include/glad.c)
 
 # Add the executable target for your project
-add_executable(GLVR ${CMAKE_SOURCE_DIR}/src/main.cpp)
+add_executable(GLVR ${SOURCES})
 
 # Link the glad library, GLFW3, and OpenGL libraries
 target_link_libraries(GLVR glad glfw3 ${OPENGL_LIBRARIES})
