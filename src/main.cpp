@@ -1,7 +1,9 @@
 #include <iostream>
 #include "glad.h"
 #include "glfw3.h"
-#include "shader.h"
+#include "shader.hpp"
+#include "bmp.hpp"
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -57,7 +59,7 @@ int main() {
 
 
 	// -- Vertex Shader
-	Shader solidColorShader("../res/basic.vert", "../res/screenPos.frag");
+	Shader solidColorShader("../res/shaders/basic.vert", "../res/shaders/screenPos.frag");
 	
 	// Create OpenGL Objects
 	// -- Vertex Buffer
@@ -82,6 +84,12 @@ int main() {
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(3*sizeof(float)));
 	glEnableVertexAttribArray(1);
+
+	// Load Texture
+	BMP newTexture = BMP(1, 1, 1);
+	unsigned char* a = newTexture.load("../res/textures/3x3random.bmp");
+	std::cout << std::hex << a[0] << a[1] << a[10];
+	newTexture.free(a);
 
 	// Start Render Loop
 	while (!glfwWindowShouldClose(window)) {
