@@ -2,7 +2,8 @@
 #include "glad.h"
 #include "glfw3.h"
 #include "shader.hpp"
-#include "bmp.hpp"
+#include "vector"
+#include "mesh.hpp"
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -37,7 +38,7 @@ int main() {
 
 	// Set Callback for resizing OpenGL viewport when GLFW size adjusted
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
+	
 	// OpenGL Information Requesting
 	// -- number of supported vertex attributes (16 for my laptop, that is the minimum)
 	int nrAttributes;
@@ -47,75 +48,92 @@ int main() {
 
 	// Create Resources
 	// -- Vertex Data
-	float vertices[]{
-		-0.5f, -0.5f, 0.0f,	1.0f, 0.0f, 0.0f,
-		0.5f, -0.5f, 0.0f,	0.0f, 1.0f, 0.0f,
-		0.0f, 0.5f, 0.0f,	0.0f, 0.0f, 1.0f
+	std::vector<float> StraightVert {
+		-1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, // Left-Bottom
+		1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, // Right-Bottom
+		1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // Right-Top
+		-1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f // Left-Top
 	};
 
-	unsigned int indices[]{
-		0, 1, 2
-	}; // First Triangle
+	std::vector<int> StraightInd{
+		0, 1, 2,
+		2, 3, 0
+	};
 
+	Mesh StraightMesh(StraightVert, StraightInd);
+	Mesh StraightMesh1(StraightVert, StraightInd);
+	Mesh StraightMesh2(StraightVert, StraightInd);
+
+	std::vector<Mesh> scene;
+	scene.push_back(StraightMesh);
+	scene.push_back(StraightMesh1);
+	scene.push_back(StraightMesh2);
 
 	// -- Vertex Shader
-	Shader solidColorShader("../res/shaders/basic.vert", "../res/shaders/screenPos.frag");
+	Shader solidColorShader("../res/shaders/basic.vert", "../res/shaders/vertexColor.frag");
 	
-	// Create OpenGL Objects
-	// -- Vertex Buffer
-	unsigned int VBO[1];
-	glGenBuffers(1, VBO);
 
-	// -- Vertex Array
-	unsigned int VAO[1];
-	glGenVertexArrays(1, VAO);
-
-	// -- Element Buffer
-	unsigned int EBO[1];
-	glGenBuffers(1, EBO);
-
-	// Bind the buffer while the array is bound
-	glBindVertexArray(VAO[0]);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[0]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(3*sizeof(float)));
-	glEnableVertexAttribArray(1);
-
+	/*
 	// Load Texture
 	BMP newTexture = BMP(1, 1, 1);
-	unsigned char* a = newTexture.load("../res/textures/3x3random.bmp");
+:	unsigned char* a = newTexture.load("../res/textures/3x3random.bmp");
 	std::cout << std::hex << a[0] << a[1] << a[10];
 	newTexture.free(a);
+	*/
 
 	// Start Render Loop
 	while (!glfwWindowShouldClose(window)) {
 		// Process Input
 		processInput(window);
+		
+		// Create OpenGL Objects
+		// -- Vertex Buffer
+		std::vector<unsigned int> VBO;
+		for
+
+		
+		VBO.resize(scene.size());
+		glGenBuffers(1, &VBO[0]);
+
+	  // -- Vertex Array
+	  std::vector<unsigned int> VAO;
+	  VAO.resize(scene.size());
+	  glGenVertexArrays(1, &VAO[0]);
+
+	  // -- Element Buffer
+		std::vector<unsigned int> EBO;
+		VBO.resize(scene.size());
+		glGenBuffers(1, &EBO[0]);
+
+	  // Bind the buffer while the array is bound
+	  for (int i = 0; i < scene.size(); i++) {
+	    glBindVertexArray(VAO[i]);
+	    glBindBuffer(GL_ARRAY_BUFFER, VBO[i]);
+	    glBufferData(GL_ARRAY_BUFFER, sizeof(int) * StraightMesh.m_Vertices.size(), StraightMesh.m_Vertices.data(), GL_STATIC_DRAW);
+	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[i]);
+	    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * StraightMesh.m_Indices.size(), StraightMesh.m_Indices.data(), GL_STATIC_DRAW);
+	    
+	    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)0);
+	    glEnableVertexAttribArray(0);
+	    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(3*sizeof(float)));
+	    glEnableVertexAttribArray(1);
+	  }
 
 		// Render Logic
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // state setting function
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		// Time Green Shader Uniform Setting
-		float timeValue = (float) glfwGetTime();
-		float greenValue = sin(timeValue)/2.0f + 0.5f;
-
-		int width, height;
-		glfwGetWindowSize(window, &width, &height);
-
 		solidColorShader.use();
-		solidColorShader.setVec2("resolution", (float) width, (float) height);
-	
-		// Render Right Tri
-		//glUseProgram(shaderProgram2); 
-		glBindVertexArray(VAO[0]);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[0]);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+		for (int i = 0; i < scene.size(); i++){
+		  solidColorShader.setVec3("u.Transform", 0.0f, i * 0.01f, 0.1f);
+
+		  // Render Right Tri
+		  //glUseProgram(shaderProgram2); 
+		  glBindVertexArray(VAO[i]);
+		  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[i]);
+		  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		}
 		// Render
 		glfwSwapBuffers(window);
 		glfwPollEvents();

@@ -1,7 +1,13 @@
 #version 330
+
+struct VertexData {
+	vec3 Position;
+	vec3 Color;
+};
+
+in VertexData v;
 out vec4 FragColor;
-in vec3 vertexColor;
 
 void main() {
-	FragColor = vec4(vertexColor, 1.0f);
+	FragColor = vec4(v.Color, 1.0f);
 }

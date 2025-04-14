@@ -4,7 +4,7 @@
 class Shader {
   public:
     unsigned int uid;
-    Shader(const char* vertexPath, const char* fragPath);
+    Shader(const std::string&, const std::string&);
 
     void use();
 

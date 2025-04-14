@@ -4,7 +4,7 @@
 #include "iostream"
 #include "glad.h"
 
-Shader::Shader(const char* vertexPath, const char* fragPath){
+Shader::Shader(const std::string& vertexPath, const std::string& fragPath){
   std::string vertexCode;
   std::string fragCode;
   std::ifstream vShaderFile;
